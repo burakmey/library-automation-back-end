@@ -4,6 +4,11 @@
     {
         public void Configure(EntityTypeBuilder<Book> builder)
         {
+            builder.Navigation(b => b.Language).AutoInclude();
+            builder.Navigation(b => b.Publisher).AutoInclude();
+            builder.Navigation(b => b.BookAuthors).AutoInclude();
+            builder.Navigation(b => b.BookCategories).AutoInclude();
+
             builder.HasData(
                 [
                     new() { Id = 1, Name = "Cesur Yeni Dünya", Year = 1932, Count = 1, PageCount = 272, LanguageId = 1, PublisherId = 1 },

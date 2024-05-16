@@ -8,6 +8,8 @@
             builder.HasOne(ba => ba.Book).WithMany(b => b.BookAuthors).HasForeignKey(ba => ba.BookId).OnDelete(DeleteBehavior.NoAction);
             builder.HasOne(ba => ba.Author).WithMany(a => a.BookAuthors).HasForeignKey(ba => ba.AuthorId).OnDelete(DeleteBehavior.NoAction);
 
+            builder.Navigation(ba => ba.Author).AutoInclude();
+
             builder.HasData(
             [
                 new() { BookId = 1, AuthorId = 1 },

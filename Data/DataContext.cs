@@ -4,6 +4,8 @@ namespace library_automation_back_end.Data
 {
     public class DataContext : DbContext
     {
+        public DbSet<AdminApproval> AdminApprovals { get; set; }
+        public DbSet<ApprovalSituation> ApprovalSituations { get; set; }
         public DbSet<Author> Authors { get; set; }
         public DbSet<Book> Books { get; set; }
         public DbSet<BookAuthor> BookAuthors { get; set; }

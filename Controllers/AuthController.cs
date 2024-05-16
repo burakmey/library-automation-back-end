@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-
-namespace library_automation_back_end.Controllers
+﻿namespace library_automation_back_end.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]

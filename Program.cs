@@ -1,9 +1,13 @@
-global using library_automation_back_end.Controllers.Features.AuthFeatures;
 global using library_automation_back_end.Data;
+global using library_automation_back_end.Features.AuthFeatures;
+global using library_automation_back_end.Features.LibraryFeatures;
+global using library_automation_back_end.Features.UserFeatures;
 global using library_automation_back_end.Models;
 global using library_automation_back_end.Models.AbstractModels;
 global using library_automation_back_end.Services;
+global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.EntityFrameworkCore;
+global using Microsoft.EntityFrameworkCore.Metadata.Builders;
 global using System.ComponentModel.DataAnnotations;
 global using System.ComponentModel.DataAnnotations.Schema;
 global using System.Text;
@@ -19,8 +23,10 @@ namespace library_automation_back_end
             var builder = WebApplication.CreateBuilder(args);
             builder.Services.AddDbContext<DataContext>(options => { options.UseSqlServer(builder.Configuration["CONNECTION_STRING"]); });
             builder.Services.AddControllers();
+            builder.Services.AddTransient<LibraryService>();
             builder.Services.AddTransient<TokenService>();
             builder.Services.AddTransient<UserService>();
+            builder.Services.AddTransient<BookService>();
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
             {
                 options.TokenValidationParameters = new()
@@ -44,7 +50,6 @@ namespace library_automation_back_end
             app.UseAuthorization();
             app.MapControllers();
             app.UseCors();
-            app.Seed();
             app.Run();
         }
     }

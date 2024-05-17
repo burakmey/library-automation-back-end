@@ -5,12 +5,13 @@
     [ApiController]
     public class UserController : ControllerBase
     {
+        readonly AuthService authService;
         readonly UserService userService;
-        readonly BookService bookService;
-        public UserController(UserService userService, BookService bookService)
+
+        public UserController(AuthService authService, UserService userService)
         {
+            this.authService = authService;
             this.userService = userService;
-            this.bookService = bookService;
         }
 
         [HttpPost]
@@ -19,7 +20,7 @@
             //User? user = await GetUserFromToken();
             //if (user == null)
             //    return BadRequest("Invalid refresh token!");
-            BookResponse? response = await bookService.SendBorrowRequest(request, 1);
+            BookResponse? response = await userService.SendBorrowRequest(request, 1);
             if (!response.Succeeded)
                 return BadRequest(response.Message);
             return Ok(response.Message);
@@ -31,7 +32,7 @@
             //User? user = await GetUserFromToken();
             //if (user == null)
             //    return BadRequest("Invalid refresh token!");
-            BookResponse? response = await bookService.DeleteBorrowRequest(request, 1);
+            BookResponse? response = await userService.DeleteBorrowRequest(request, 1);
             if (!response.Succeeded)
                 return BadRequest(response.Message);
             return Ok(response.Message);
@@ -43,7 +44,7 @@
             //User? user = await GetUserFromToken();
             //if (user == null)
             //    return BadRequest("Invalid refresh token!");
-            BookResponse? response = await bookService.SendBorrowRequest(request, 1);
+            BookResponse? response = await userService.SendBorrowRequest(request, 1);
             if (!response.Succeeded)
                 return BadRequest(response.Message);
             return Ok(response.Message);
@@ -55,7 +56,7 @@
             //User? user = await GetUserFromToken();
             //if (user == null)
             //    return BadRequest("Invalid refresh token!");
-            BookResponse? response = await bookService.DeleteReturnRequest(request, 1);
+            BookResponse? response = await userService.DeleteReturnRequest(request, 1);
             if (!response.Succeeded)
                 return BadRequest(response.Message);
             return Ok(response.Message);
@@ -67,7 +68,19 @@
             //User? user = await GetUserFromToken();
             //if (user == null)
             //    return BadRequest("Invalid refresh token!");
-            BookResponse? response = await bookService.ReserveBook(request, 1);
+            BookResponse? response = await userService.ReserveBook(request, 2);
+            if (!response.Succeeded)
+                return BadRequest(response.Message);
+            return Ok(response.Message);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> BorrowReservedBook(BookRequest request)
+        {
+            //User? user = await GetUserFromToken();
+            //if (user == null)
+            //    return BadRequest("Invalid refresh token!");
+            BookResponse? response = await userService.SendReservedBorrowRequest(request, 1);
             if (!response.Succeeded)
                 return BadRequest(response.Message);
             return Ok(response.Message);
@@ -78,7 +91,7 @@
             string? refreshToken = Request.Cookies["token"];
             if (refreshToken == null)
                 return null;
-            User? user = await userService.GetUserWithRefreshToken(refreshToken);
+            User? user = await authService.GetUserWithRefreshToken(refreshToken);
             return user;
         }
     }

@@ -23,7 +23,7 @@
         [HttpGet]
         public async Task<IActionResult> SearchBook([FromQuery] SearchBookRequest request)
         {
-            SearchBookResponse? response = await libraryService.GetSearchedBooks(request);
+            SearchResultResponse? response = await libraryService.GetSearchedBooks(request);
             if (response == null)
                 return BadRequest("There is no book!");
             return Ok(response);

@@ -10,7 +10,7 @@
         public string Nation { get; set; } = user.Country!.Name;
         public string Role { get; set; } = user.Role!.Name;
         public ICollection<Fine>? Fines { get; set; } = user.Fines;
-        public ICollection<UserBookBorrow>? UserBookBorrows { get; set; } = user.UserBookBorrows;
-        public ICollection<UserBookReserve>? UserBookReserves { get; set; } = user.UserBookReserves;
+        public ICollection<UserBookBorrowResponse>? UserBookBorrows { get; set; } = user.UserBookBorrows?.Select(ubb => new UserBookBorrowResponse(ubb)).ToList();
+        public ICollection<UserBookReserveResponse>? UserBookReserves { get; set; } = user.UserBookReserves?.Select(ubr => new UserBookReserveResponse(ubr)).ToList();
     }
 }

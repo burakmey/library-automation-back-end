@@ -1,4 +1,5 @@
 global using library_automation_back_end.Data;
+global using library_automation_back_end.Features.AdminFeatures;
 global using library_automation_back_end.Features.AuthFeatures;
 global using library_automation_back_end.Features.LibraryFeatures;
 global using library_automation_back_end.Features.UserFeatures;
@@ -25,8 +26,8 @@ namespace library_automation_back_end
             builder.Services.AddControllers();
             builder.Services.AddTransient<LibraryService>();
             builder.Services.AddTransient<TokenService>();
+            builder.Services.AddTransient<AuthService>();
             builder.Services.AddTransient<UserService>();
-            builder.Services.AddTransient<BookService>();
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
             {
                 options.TokenValidationParameters = new()

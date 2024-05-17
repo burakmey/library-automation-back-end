@@ -1,8 +1,8 @@
 ﻿namespace library_automation_back_end.Configurations.Models
 {
-    public class ApprovalSituationConfiguration : IEntityTypeConfiguration<ApprovalSituation>
+    public class DesireSituationConfiguration : IEntityTypeConfiguration<DesireSituation>
     {
-        public void Configure(EntityTypeBuilder<ApprovalSituation> builder)
+        public void Configure(EntityTypeBuilder<DesireSituation> builder)
         {
             builder.HasData(
             [

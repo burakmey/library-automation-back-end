@@ -9,12 +9,18 @@
             Book? book = await dataContext.Books.FirstOrDefaultAsync(book => book.Id == request.BookId);
             if (book == null)
                 return null;
+
+            await dataContext.Entry(book).Reference(b => b.Language).LoadAsync();
+            await dataContext.Entry(book).Reference(b => b.Publisher).LoadAsync();
+            await dataContext.Entry(book).Collection(b => b.BookAuthors!).LoadAsync();
+            await dataContext.Entry(book).Collection(b => b.BookCategories!).LoadAsync();
             GetBookResponse response = new(book);
             return response;
         }
-        public async Task<SearchBookResponse?> GetSearchedBooks(SearchBookRequest request)
+
+        public async Task<SearchResultResponse?> GetSearchedBooks(SearchBookRequest request)
         {
-            IQueryable<Book> query = dataContext.Books;
+            IQueryable<Book> query = dataContext.Books.Include(b => b.BookAuthors).Include(b => b.Publisher);
             if (!string.IsNullOrEmpty(request.Search))
                 query = query.Where(b => b.Name.Contains(request.Search) ||
                 b.BookAuthors!.Any(ba => ba.Author!.Name.Contains(request.Search) ||
@@ -23,7 +29,7 @@
             if (totalCount == 0)
                 return null;
             ICollection<Book> books = await query.Skip(request.Page * request.Size).Take(request.Size).ToListAsync();
-            SearchBookResponse response = new(totalCount, books);
+            SearchResultResponse response = new(totalCount, books);
             return response;
         }
     }

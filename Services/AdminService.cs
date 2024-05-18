@@ -6,7 +6,7 @@
 
         public async Task<GetAllDesiresResponse?> GetAllDesires()
         {
-            ICollection<UserDesire>? userDesires = await dataContext.UserDesires.Include(ud => ud.User).Include(ud => ud.Book).ToListAsync();
+            ICollection<UserDesire>? userDesires = await dataContext.UserDesires.Include(ud => ud.User).Include(ud => ud.Book).Include(ud => ud.DesireSituation).ToListAsync();
             if (userDesires == null)
                 return null;
 
@@ -16,16 +16,15 @@
 
         public async Task<DesireResponse> AcceptBorrow(DesireRequest request)
         {
-            UserDesire? userDesire = await dataContext.UserDesires.FirstOrDefaultAsync(ud => ud.Id == request.DesireId);
+            UserDesire? userDesire = await dataContext.UserDesires.FirstOrDefaultAsync(ud =>
+                ud.Id == request.DesireId && ud.DesireSituationId == (int)DesireSituationEnum.Borrow);
             if (userDesire == null)
                 return new() { Succeeded = false, Message = "No user desire found for the Id in request." };
-            bool isBookAvailable = await dataContext.Books.AnyAsync(b => b.Id == userDesire.BookId && b.Count > 0);
-            if (!isBookAvailable)
-                return new() { Succeeded = false, Message = "Out of stock or invalid bookId." };
-
             Book? book = await dataContext.Books.FirstOrDefaultAsync(b => b.Id == userDesire.BookId);
-            book!.Count -= 1;
-            dataContext.UserDesires.Remove(userDesire);
+            if (book!.Count <= 0)
+                return new() { Succeeded = false, Message = "Out of stock." };
+
+            book.Count -= 1;
             DateTime returnDueDate = DateTime.UtcNow.Date.AddDays(8).AddTicks(-1);
             UserBookBorrow ubb = new()
             {
@@ -33,9 +32,42 @@
                 BookId = userDesire.BookId,
                 BorrowDate = DateTime.UtcNow,
                 ReturnDueDate = returnDueDate,
-                BorrowSituationId = 1
+                BorrowSituationId = (int)BorrowSituationEnum.Borrowed
             };
+            dataContext.UserDesires.Remove(userDesire);
             dataContext.Books.Update(book);
+            dataContext.UserBookBorrows.Add(ubb);
+            await dataContext.SaveChangesAsync();
+            return new() { Succeeded = true, Message = "The borrow request has been approved!" };
+        }
+
+        public async Task<DesireResponse> AcceptReserveBorrow(DesireRequest request)
+        {
+            UserDesire? userDesire = await dataContext.UserDesires.FirstOrDefaultAsync(ud =>
+                ud.Id == request.DesireId && ud.DesireSituationId == (int)DesireSituationEnum.ReserveBorrow);
+            if (userDesire == null)
+                return new() { Succeeded = false, Message = "No user desire found for the Id in request." };
+            UserBookReserve? ubr = await dataContext.UserBookReserves.FirstOrDefaultAsync(ubr =>
+                ubr.UserId == userDesire.UserId && ubr.BookId == userDesire.BookId && ubr.ReserveSituationId == (int)ReserveSituationEnum.Waiting);
+            if (ubr == null)
+                return new() { Succeeded = false, Message = "There is no reservation for selected book." };
+            Book? book = await dataContext.Books.FirstOrDefaultAsync(b => b.Id == userDesire.BookId);
+            if (book == null)
+                return new() { Succeeded = false, Message = "Invalid bookId." };
+
+            ubr!.ReserveSituationId = (int)ReserveSituationEnum.Borrowed;
+            ubr.BorrowDate = DateTime.Now;
+            DateTime returnDueDate = DateTime.UtcNow.Date.AddDays(8).AddTicks(-1);
+            UserBookBorrow ubb = new()
+            {
+                UserId = userDesire.UserId,
+                BookId = userDesire.BookId,
+                BorrowDate = DateTime.UtcNow,
+                ReturnDueDate = returnDueDate,
+                BorrowSituationId = (int)BorrowSituationEnum.Borrowed
+            };
+            dataContext.UserDesires.Remove(userDesire);
+            dataContext.UserBookReserves.Update(ubr);
             dataContext.UserBookBorrows.Add(ubb);
             await dataContext.SaveChangesAsync();
             return new() { Succeeded = true, Message = "The borrow request has been approved!" };
@@ -43,19 +75,21 @@
 
         public async Task<DesireResponse> AcceptReturn(DesireRequest request)
         {
-            UserDesire? userDesire = await dataContext.UserDesires.FirstOrDefaultAsync(ud => ud.Id == request.DesireId);
+            UserDesire? userDesire = await dataContext.UserDesires.FirstOrDefaultAsync(ud =>
+                ud.Id == request.DesireId && ud.DesireSituationId == (int)DesireSituationEnum.Return);
             if (userDesire == null)
                 return new() { Succeeded = false, Message = "No user desire found for the Id in request." };
-            bool isBookAvailable = await dataContext.Books.AnyAsync(b => b.Id == userDesire.BookId);
-            if (!isBookAvailable)
+            UserBookBorrow? ubb = await dataContext.UserBookBorrows.FirstOrDefaultAsync(ubb => ubb.UserId == userDesire.UserId && ubb.BookId == userDesire.BookId);
+            if (ubb == null)
+                return new() { Succeeded = false, Message = "No borrowing found for the Id in request." };
+            Book? book = await dataContext.Books.FirstOrDefaultAsync(b => b.Id == userDesire.BookId);
+            if (book == null)
                 return new() { Succeeded = false, Message = "Invalid bookId." };
 
-            Book? book = await dataContext.Books.FirstOrDefaultAsync(b => b.Id == userDesire.BookId);
             book!.Count += 1;
-            dataContext.UserDesires.Remove(userDesire);
-            UserBookBorrow? ubb = await dataContext.UserBookBorrows.FirstOrDefaultAsync(ubb => ubb.UserId == userDesire.UserId && ubb.BookId == userDesire.BookId);
             ubb!.ReturnDate = DateTime.Now;
-            ubb!.BorrowSituationId = 2;
+            ubb!.BorrowSituationId = (int)BorrowSituationEnum.Returned;
+            dataContext.UserDesires.Remove(userDesire);
             dataContext.UserBookBorrows.Update(ubb);
             await dataContext.SaveChangesAsync();
             return new() { Succeeded = true, Message = "The return request has been approved!" };

@@ -26,13 +26,13 @@
             return Ok(response.Message);
         }
 
-        [HttpDelete]
-        public async Task<IActionResult> CancelBorrowBook(BookRequest request)
+        [HttpPost]
+        public async Task<IActionResult> BorrowReservedBook(BookRequest request)
         {
             //User? user = await GetUserFromToken();
             //if (user == null)
             //    return BadRequest("Invalid refresh token!");
-            BookResponse? response = await userService.DeleteBorrowRequest(request, 1);
+            BookResponse? response = await userService.SendReservedBorrowRequest(request, 1);
             if (!response.Succeeded)
                 return BadRequest(response.Message);
             return Ok(response.Message);
@@ -44,19 +44,7 @@
             //User? user = await GetUserFromToken();
             //if (user == null)
             //    return BadRequest("Invalid refresh token!");
-            BookResponse? response = await userService.SendBorrowRequest(request, 1);
-            if (!response.Succeeded)
-                return BadRequest(response.Message);
-            return Ok(response.Message);
-        }
-
-        [HttpDelete]
-        public async Task<IActionResult> CancelReturnBook(BookRequest request)
-        {
-            //User? user = await GetUserFromToken();
-            //if (user == null)
-            //    return BadRequest("Invalid refresh token!");
-            BookResponse? response = await userService.DeleteReturnRequest(request, 1);
+            BookResponse? response = await userService.SendReturnRequest(request, 1);
             if (!response.Succeeded)
                 return BadRequest(response.Message);
             return Ok(response.Message);
@@ -68,19 +56,19 @@
             //User? user = await GetUserFromToken();
             //if (user == null)
             //    return BadRequest("Invalid refresh token!");
-            BookResponse? response = await userService.ReserveBook(request, 2);
+            BookResponse? response = await userService.ReserveBook(request, 1);
             if (!response.Succeeded)
                 return BadRequest(response.Message);
             return Ok(response.Message);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> BorrowReservedBook(BookRequest request)
+        [HttpDelete]
+        public async Task<IActionResult> CancelDesire(DesireRequest request)
         {
             //User? user = await GetUserFromToken();
             //if (user == null)
             //    return BadRequest("Invalid refresh token!");
-            BookResponse? response = await userService.SendReservedBorrowRequest(request, 1);
+            BookResponse? response = await userService.DeleteRequest(request, 1);
             if (!response.Succeeded)
                 return BadRequest(response.Message);
             return Ok(response.Message);

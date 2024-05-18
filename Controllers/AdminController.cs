@@ -31,6 +31,15 @@
         }
 
         [HttpPost]
+        public async Task<IActionResult> AcceptReserveBorrow(DesireRequest request)
+        {
+            DesireResponse response = await adminService.AcceptReserveBorrow(request);
+            if (!response.Succeeded)
+                return BadRequest(response.Message);
+            return Ok(response.Message);
+        }
+
+        [HttpPost]
         public async Task<IActionResult> AcceptReturn(DesireRequest request)
         {
             DesireResponse response = await adminService.AcceptReturn(request);

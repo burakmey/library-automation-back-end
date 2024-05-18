@@ -1,3 +1,4 @@
+global using library_automation_back_end.Configurations;
 global using library_automation_back_end.Data;
 global using library_automation_back_end.Features.AdminFeatures;
 global using library_automation_back_end.Features.AuthFeatures;
@@ -24,9 +25,10 @@ namespace library_automation_back_end
             var builder = WebApplication.CreateBuilder(args);
             builder.Services.AddDbContext<DataContext>(options => { options.UseSqlServer(builder.Configuration["CONNECTION_STRING"]); });
             builder.Services.AddControllers();
+            builder.Services.AddTransient<AdminService>();
+            builder.Services.AddTransient<AuthService>();
             builder.Services.AddTransient<LibraryService>();
             builder.Services.AddTransient<TokenService>();
-            builder.Services.AddTransient<AuthService>();
             builder.Services.AddTransient<UserService>();
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
             {

@@ -6,8 +6,8 @@
         {
             builder.HasData(
                 [
-                    new() { Id = 1, Name = "Yönetici" },
-                    new() { Id = 2, Name = "Kullanıcı" }
+                    new() { Id = 1, Name = "Admin" },
+                    new() { Id = 2, Name = "User" }
                 ]);
         }
     }

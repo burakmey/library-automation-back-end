@@ -105,5 +105,87 @@
             await dataContext.SaveChangesAsync();
             return new() { Succeeded = true, Message = "The request has been rejected!" };
         }
+
+        public async Task<AddResponse> AddBook(AddBookRequest request)
+        {
+            if (request.AuthorIds.Count == 0)
+                return new() { Succeeded = false, Message = "Authors must not be empty." };
+            if (request.CategoryIds.Count == 0)
+                return new() { Succeeded = false, Message = "Categories must not be empty." };
+            bool isLanguageExist = await dataContext.Languages.Where(l => l.Id == request.LanguageId).AnyAsync();
+            if (!isLanguageExist)
+                return new() { Succeeded = false, Message = "Language does not exist in the database." };
+            bool isPublisherExist = await dataContext.Publishers.Where(p => p.Id == request.PublisherId).AnyAsync();
+            if (!isPublisherExist)
+                return new() { Succeeded = false, Message = "Publisher does not exist in the database." };
+            bool areAuthorsExist = await dataContext.Authors.Where(a => request.AuthorIds.Contains(a.Id)).CountAsync() == request.AuthorIds.Count;
+            if (!areAuthorsExist)
+                return new() { Succeeded = false, Message = "One or more authors do not exist in the database." };
+            bool areCategoriesExist = await dataContext.Categories.Where(c => request.CategoryIds.Contains(c.Id)).CountAsync() == request.CategoryIds.Count;
+            if (!areCategoriesExist)
+                return new() { Succeeded = false, Message = "One or more categories do not exist in the database." };
+            Book? existingBook = await dataContext.Books.Include(b => b.BookAuthors!).ThenInclude(ba => ba.Author).FirstOrDefaultAsync(b =>
+                b.Name == request.Name && b.Year == request.Year && b.LanguageId == request.LanguageId && b.PublisherId == request.PublisherId);
+            if (existingBook != null)
+                return new() { Succeeded = false, Message = "The book already exists." };
+
+            Book book = new()
+            {
+                Name = request.Name,
+                Year = request.Year,
+                Count = request.Count,
+                PageCount = request.PageCount,
+                LanguageId = request.LanguageId,
+                PublisherId = request.PublisherId,
+                BookAuthors = request.AuthorIds.Select(authorId => new BookAuthor { AuthorId = authorId }).ToList(),
+                BookCategories = request.CategoryIds.Select(categoryId => new BookCategory { CategoryId = categoryId }).ToList()
+            };
+            dataContext.Books.Add(book);
+            await dataContext.SaveChangesAsync();
+            return new() { Succeeded = true, Message = "Book added successfully!" };
+        }
+
+        public async Task<AddResponse> AddPublisher(AddPublisherRequest request)
+        {
+            Publisher? existingPublisher = await dataContext.Publishers.Include(p => p.Country).FirstOrDefaultAsync(p =>
+                p.Name == request.Publisher.Name && p.CountryId == request.Publisher.CountryId);
+            if (existingPublisher == null)
+                return new() { Succeeded = false, Message = "Publisher already exist!" };
+            dataContext.Publishers.Add(request.Publisher);
+            await dataContext.SaveChangesAsync();
+            return new() { Succeeded = true, Message = "Publisher has been registered." };
+        }
+
+        public async Task<AddResponse> AddAuthor(AddAuthorRequest request)
+        {
+            int count = 0;
+            foreach (Author author in request.Authors)
+            {
+                Author? existingAuthor = await dataContext.Authors.Include(a => a.Country).FirstOrDefaultAsync(a =>
+                    a.Name == author.Name && a.CountryId == author.CountryId);
+                if (existingAuthor != null)
+                    continue;
+                count++;
+                dataContext.Authors.Add(author);
+                await dataContext.SaveChangesAsync();
+            }
+            return new() { Succeeded = count > 0, Message = $"Number of registered authors: {count}." };
+        }
+
+        public async Task<AddResponse> AddCategory(AddCategoryRequest request)
+        {
+            int count = 0;
+            foreach (Category category in request.Categories)
+            {
+                Category? existingCategory = await dataContext.Categories.FirstOrDefaultAsync(c => c.Name == category.Name);
+                if (existingCategory != null)
+                    continue;
+                count++;
+                dataContext.Categories.Add(category);
+                await dataContext.SaveChangesAsync();
+            }
+            return new() { Succeeded = count > 0, Message = $"Number of registered categories: {count}." };
+        }
+
     }
 }

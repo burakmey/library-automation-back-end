@@ -20,7 +20,7 @@
             if (user == null)
                 return BadRequest("Incorrect email or password!");
 
-            Token token = tokenService.CreateAccessToken();
+            Token token = tokenService.CreateAccessToken(user);
             await authService.UpdateRefreshToken(user, token);
             LoginResponse response = new(user, token);
             HttpContext.Response.Cookies.Append("token", token.RefreshToken, new CookieOptions { HttpOnly = true, Secure = true, IsEssential = true, SameSite = SameSiteMode.None });
@@ -50,7 +50,7 @@
             if (user == null)
                 return BadRequest("Invalid refresh token!");
 
-            Token token = tokenService.CreateAccessToken(refreshToken);
+            Token token = tokenService.CreateAccessToken(user, refreshToken);
             LoginResponse response = new(user, token);
             return Ok(response);
         }

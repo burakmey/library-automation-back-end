@@ -1,8 +1,8 @@
 ﻿namespace library_automation_back_end.Controllers
 {
-    //[Authorize]
-    [Route("api/[controller]/[action]")]
+    [Authorize(Policy = "Admin")]
     [ApiController]
+    [Route("api/[controller]/[action]")]
     public class AdminController : ControllerBase
     {
         readonly AdminService adminService;
@@ -52,6 +52,43 @@
         public async Task<IActionResult> RejectDesire(DesireRequest request)
         {
             DesireResponse response = await adminService.RejectDesire(request);
+            if (!response.Succeeded)
+                return BadRequest(response.Message);
+            return Ok(response.Message);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddBook(AddBookRequest request)
+        {
+            AddResponse response = await adminService.AddBook(request);
+            if (!response.Succeeded)
+                return BadRequest(response.Message);
+            return Ok(response.Message);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddPublisher(AddPublisherRequest request)
+        {
+            AddResponse response = await adminService.AddPublisher(request);
+            if (!response.Succeeded)
+                return BadRequest(response.Message);
+            return Ok(response.Message);
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> AddAuthor(AddAuthorRequest request)
+        {
+            AddResponse response = await adminService.AddAuthor(request);
+            if (!response.Succeeded)
+                return BadRequest(response.Message);
+            return Ok(response.Message);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddCategory(AddCategoryRequest request)
+        {
+            AddResponse response = await adminService.AddCategory(request);
             if (!response.Succeeded)
                 return BadRequest(response.Message);
             return Ok(response.Message);

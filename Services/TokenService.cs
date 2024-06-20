@@ -7,14 +7,21 @@ namespace library_automation_back_end.Services
     public class TokenService(IConfiguration configuration)
     {
         readonly IConfiguration configuration = configuration;
-        public Token CreateAccessToken(string? refreshToken = null)
+        public Token CreateAccessToken(User user, string? refreshToken = null)
         {
             int expirationMinute = int.Parse(configuration["Token:AccessTokenMinute"] ?? throw new Exception("AccessTokenMinute not found!"));
             SymmetricSecurityKey securityKey = new(Encoding.UTF8.GetBytes(configuration["SECURITY_KEY"] ?? throw new Exception("SECURITY_KEY not found!")));
             SigningCredentials signingCredentials = new(securityKey, SecurityAlgorithms.HmacSha256);
+            List<Claim> claims =
+            [
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Name, user.Name + " " + user.Surname),
+                new Claim(ClaimTypes.Role, user.Role!.Name),
+            ];
             JwtSecurityToken securityToken = new(
                 audience: configuration["Token:Audience"],
                 issuer: configuration["Token:Issuer"],
+                claims: claims,
                 expires: DateTime.UtcNow.AddMinutes(expirationMinute),
                 notBefore: DateTime.UtcNow,
                 signingCredentials: signingCredentials

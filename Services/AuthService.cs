@@ -20,7 +20,7 @@ namespace library_automation_back_end.Services
                 Surname = request.Surname,
                 PasswordHash = passwordHash,
                 PasswordSalt = passwordSalt,
-                CountryId = request.CountyId,
+                CountryId = request.CountryId,
                 RegisteredAt = DateTime.Now,
                 RoleId = 2,
             };

@@ -7,11 +7,13 @@ global using library_automation_back_end.Features.UserFeatures;
 global using library_automation_back_end.Models;
 global using library_automation_back_end.Models.AbstractModels;
 global using library_automation_back_end.Services;
+global using Microsoft.AspNetCore.Authorization;
 global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.EntityFrameworkCore.Metadata.Builders;
 global using System.ComponentModel.DataAnnotations;
 global using System.ComponentModel.DataAnnotations.Schema;
+global using System.Security.Claims;
 global using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -30,6 +32,7 @@ namespace library_automation_back_end
             builder.Services.AddTransient<LibraryService>();
             builder.Services.AddTransient<TokenService>();
             builder.Services.AddTransient<UserService>();
+
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
             {
                 options.TokenValidationParameters = new()
@@ -44,15 +47,28 @@ namespace library_automation_back_end
                     LifetimeValidator = (notBefore, expires, securityToken, validationParameters) => expires != null ? expires > DateTime.UtcNow : false
                 };
             });
-            builder.Services.AddAuthorization();
-            builder.Services.AddCors(options => options.AddDefaultPolicy(policy => policy.WithOrigins(builder.Configuration["ORIGIN"] ?? throw new Exception("ORIGIN not found!")).AllowAnyMethod().AllowAnyHeader().AllowCredentials()));
+
+            builder.Services.AddAuthorizationBuilder()
+                .AddPolicy("Admin", policy => policy.RequireRole("Admin"))
+                .AddPolicy("User", policy => policy.RequireRole("User"));
+
+            builder.Services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(policy =>
+                {
+                    policy.WithOrigins(builder.Configuration["ORIGIN"] ?? throw new Exception("ORIGIN not found!"))
+                          .AllowAnyMethod()
+                          .AllowAnyHeader()
+                          .AllowCredentials();
+                });
+            });
 
             var app = builder.Build();
             app.UseHttpsRedirection();
+            app.UseCors();
             app.UseAuthentication();
             app.UseAuthorization();
             app.MapControllers();
-            app.UseCors();
             app.Run();
         }
     }

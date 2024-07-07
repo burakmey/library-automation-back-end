@@ -2,6 +2,6 @@
 {
     public class GetAllDesiresResponse(ICollection<UserDesire> userDesires)
     {
-        public ICollection<UserDesireResponse> UserDesireResponses { get; set; } = userDesires.Select(ud => new UserDesireResponse(ud)).ToList();
+        public ICollection<UsersDesireResponse> UsersDesires { get; set; } = userDesires.Select(ud => new UsersDesireResponse(ud)).ToList();
     }
 }

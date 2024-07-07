@@ -28,35 +28,34 @@ namespace library_automation_back_end.Services
             await dataContext.SaveChangesAsync();
             return new() { Succeeded = true, Message = "User created!" };
         }
-
         public async Task<User?> GetUser(LoginRequest request)
         {
-            User? user = await dataContext.Users.FirstOrDefaultAsync(user => user.Email == request.Email);
+            User? user = await dataContext.Users.Include(u => u.Country).Include(u => u.Role).Include(u => u.Fines)
+                .Include(u => u.UserBookBorrows)
+                .ThenInclude(ubb => ubb.Book)
+                .Include(u => u.UserBookReserves)
+                .ThenInclude(ubr => ubr.Book)
+                .FirstOrDefaultAsync(user => user.Email == request.Email);
             if (user == null || !VerifyPasswordHash(request.Password, user.PasswordHash, user.PasswordSalt))
                 return null;
-
-            await dataContext.Entry(user).Reference(u => u.Country).LoadAsync();
-            await dataContext.Entry(user).Reference(u => u.Role).LoadAsync();
-            if (user.Fines != null) await dataContext.Entry(user).Collection(u => u.Fines!).LoadAsync();
-            if (user.UserBookBorrows != null) await dataContext.Entry(user).Collection(u => u.UserBookBorrows!)
-                .Query().Where(ubb => ubb.BorrowSituationId == 1).Include(ubb => ubb.Book).LoadAsync();
-            if (user.UserBookReserves != null) await dataContext.Entry(user).Collection(u => u.UserBookReserves!)
-                .Query().Where(ubr => ubr.ReserveSituationId == 1).Include(ubr => ubr.Book).LoadAsync();
+            if (!user.Fines.Any()) user.Fines = null;
+            if (!user.UserBookBorrows.Any()) user.UserBookBorrows = null;
+            if (!user.UserBookReserves.Any()) user.UserBookReserves = null;
             return user;
         }
         public async Task<User?> GetUserWithRefreshToken(string refreshToken)
         {
-            User? user = await dataContext.Users.FirstOrDefaultAsync(user => user.RefreshToken == refreshToken);
+
+            User? user = await dataContext.Users.Include(u => u.Country).Include(u => u.Role).Include(u => u.Fines)
+                .Include(u => u.UserBookBorrows)
+                .ThenInclude(ubb => ubb.Book)
+                .Include(u => u.UserBookReserves)
+                .ThenInclude(ubr => ubr.Book).FirstOrDefaultAsync(user => user.RefreshToken == refreshToken);
             if (user == null || user.RefreshTokenEndDate < DateTime.UtcNow)
                 return null;
-
-            await dataContext.Entry(user).Reference(u => u.Country).LoadAsync();
-            await dataContext.Entry(user).Reference(u => u.Role).LoadAsync();
-            if (user.Fines != null) await dataContext.Entry(user).Collection(u => u.Fines!).LoadAsync();
-            if (user.UserBookBorrows != null) await dataContext.Entry(user).Collection(u => u.UserBookBorrows!)
-                .Query().Where(ubb => ubb.BorrowSituationId == 1).Include(ubb => ubb.Book).LoadAsync();
-            if (user.UserBookReserves != null) await dataContext.Entry(user).Collection(u => u.UserBookReserves!)
-                .Query().Where(ubr => ubr.ReserveSituationId == 1).Include(ubr => ubr.Book).LoadAsync();
+            if (!user.Fines.Any()) user.Fines = null;
+            if (!user.UserBookBorrows.Any()) user.UserBookBorrows = null;
+            if (!user.UserBookReserves.Any()) user.UserBookReserves = null;
             return user;
         }
         public async Task UpdateRefreshToken(User user, Token token)
@@ -66,6 +65,20 @@ namespace library_automation_back_end.Services
             user.RefreshTokenEndDate = token.Expiration.AddMinutes(additionalMinute);
             dataContext.Users.Update(user);
             await dataContext.SaveChangesAsync();
+        }
+        public async Task<ICollection<UserDesire>?> GetUserDesires(int userId)
+        {
+            ICollection<UserDesire> userDesires = await dataContext.UserDesires.Where(ud => ud.UserId == userId).Include(ud => ud.Book).Include(ud => ud.DesireSituation).ToListAsync();
+            if (userDesires.Count == 0)
+                return null;
+            return userDesires;
+        }
+        public async Task<ICollection<UserBookReserve>?> GetUserReservations(int userId)
+        {
+            ICollection<UserBookReserve> userReservations = await dataContext.UserBookReserves.Where(ubr => ubr.UserId == userId).Include(ubr => ubr.Book).Include(ubr => ubr.ReserveSituation).ToListAsync();
+            if (userReservations.Count == 0)
+                return null;
+            return userReservations;
         }
         static void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
         {

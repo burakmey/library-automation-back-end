@@ -22,7 +22,8 @@
 
             Token token = tokenService.CreateAccessToken(user);
             await authService.UpdateRefreshToken(user, token);
-            LoginResponse response = new(user, token);
+            ICollection<UserDesire>? userDesires = await authService.GetUserDesires(user.Id);
+            LoginResponse response = new(user, userDesires, token);
             HttpContext.Response.Cookies.Append("token", token.RefreshToken, new CookieOptions { HttpOnly = true, Secure = true, IsEssential = true, SameSite = SameSiteMode.None });
             return Ok(response);
         }
@@ -51,7 +52,8 @@
                 return BadRequest("Invalid refresh token!");
 
             Token token = tokenService.CreateAccessToken(user, refreshToken);
-            LoginResponse response = new(user, token);
+            ICollection<UserDesire>? userDesires = await authService.GetUserDesires(user.Id);
+            LoginResponse response = new(user, userDesires, token);
             return Ok(response);
         }
     }

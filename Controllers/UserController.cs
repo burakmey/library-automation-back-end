@@ -20,10 +20,12 @@
             User? user = await GetUserFromToken();
             if (user == null)
                 return BadRequest("Invalid refresh token!");
-            BookResponse? response = await userService.SendBorrowRequest(request, user.Id);
-            if (!response.Succeeded)
-                return BadRequest(response.Message);
-            return Ok(response.Message);
+            BookResponse bookResponse = await userService.SendBorrowRequest(request, user.Id);
+            if (!bookResponse.Succeeded)
+                return BadRequest(bookResponse.Message);
+            ICollection<UserDesire>? userDesires = await authService.GetUserDesires(user.Id);
+            SendDesireResponse response = new(bookResponse, userDesires);
+            return Ok(response);
         }
 
         [HttpPost]
@@ -32,10 +34,12 @@
             User? user = await GetUserFromToken();
             if (user == null)
                 return BadRequest("Invalid refresh token!");
-            BookResponse? response = await userService.SendReservedBorrowRequest(request, user.Id);
-            if (!response.Succeeded)
-                return BadRequest(response.Message);
-            return Ok(response.Message);
+            BookResponse bookResponse = await userService.SendReservedBorrowRequest(request, user.Id);
+            if (!bookResponse.Succeeded)
+                return BadRequest(bookResponse.Message);
+            ICollection<UserDesire>? userDesires = await authService.GetUserDesires(user.Id);
+            SendDesireResponse response = new(bookResponse, userDesires);
+            return Ok(response);
         }
 
         [HttpPost]
@@ -44,10 +48,12 @@
             User? user = await GetUserFromToken();
             if (user == null)
                 return BadRequest("Invalid refresh token!");
-            BookResponse? response = await userService.SendReturnRequest(request, user.Id);
-            if (!response.Succeeded)
-                return BadRequest(response.Message);
-            return Ok(response.Message);
+            BookResponse? bookResponse = await userService.SendReturnRequest(request, user.Id);
+            if (!bookResponse.Succeeded)
+                return BadRequest(bookResponse.Message);
+            ICollection<UserDesire>? userDesires = await authService.GetUserDesires(user.Id);
+            SendDesireResponse response = new(bookResponse, userDesires);
+            return Ok(response);
         }
 
         [HttpPost]
@@ -56,10 +62,12 @@
             User? user = await GetUserFromToken();
             if (user == null)
                 return BadRequest("Invalid refresh token!");
-            BookResponse? response = await userService.ReserveBook(request, user.Id);
-            if (!response.Succeeded)
-                return BadRequest(response.Message);
-            return Ok(response.Message);
+            BookResponse? bookResponse = await userService.ReserveBook(request, user.Id);
+            if (!bookResponse.Succeeded)
+                return BadRequest(bookResponse.Message);
+            ICollection<UserBookReserve>? userReservations = await authService.GetUserReservations(user.Id);
+            ReserveResponse response = new(bookResponse, userReservations);
+            return Ok(response);
         }
 
         [HttpDelete]
@@ -68,10 +76,12 @@
             User? user = await GetUserFromToken();
             if (user == null)
                 return BadRequest("Invalid refresh token!");
-            BookResponse? response = await userService.DeleteRequest(request, user.Id);
-            if (!response.Succeeded)
-                return BadRequest(response.Message);
-            return Ok(response.Message);
+            BookResponse? bookResponse = await userService.DeleteRequest(request, user.Id);
+            if (!bookResponse.Succeeded)
+                return BadRequest(bookResponse.Message);
+            ICollection<UserDesire>? userDesires = await authService.GetUserDesires(user.Id);
+            SendDesireResponse response = new(bookResponse, userDesires);
+            return Ok(response);
         }
 
         async Task<User?> GetUserFromToken()

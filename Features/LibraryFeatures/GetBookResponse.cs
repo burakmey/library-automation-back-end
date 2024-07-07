@@ -2,6 +2,7 @@
 {
     public class GetBookResponse(Book book)
     {
+        public int Id { get; set; } = book.Id;
         public string Name { get; set; } = book.Name;
         public int Year { get; set; } = book.Year;
         public int Count { get; set; } = book.Count;

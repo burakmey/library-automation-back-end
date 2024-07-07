@@ -20,7 +20,7 @@
 
         public async Task<SearchResultResponse?> GetSearchedBooks(SearchBookRequest request)
         {
-            IQueryable<Book> query = dataContext.Books.Include(b => b.BookAuthors).Include(b => b.Publisher);
+            IQueryable<Book> query = dataContext.Books.Include(b => b.BookAuthors).Include(b => b.Publisher).Include(b => b.Language).Include(b => b.BookCategories);
             if (!string.IsNullOrEmpty(request.Search))
                 query = query.Where(b => b.Name.Contains(request.Search) ||
                 b.BookAuthors!.Any(ba => ba.Author!.Name.Contains(request.Search) ||

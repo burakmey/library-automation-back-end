@@ -6,11 +6,33 @@
 
         public async Task<GetAllDesiresResponse?> GetAllDesires()
         {
-            ICollection<UserDesire>? userDesires = await dataContext.UserDesires.Include(ud => ud.User).Include(ud => ud.Book).Include(ud => ud.DesireSituation).ToListAsync();
-            if (userDesires == null)
+            ICollection<UserDesire> userDesires = await dataContext.UserDesires.Include(ud => ud.User).Include(ud => ud.Book).Include(ud => ud.DesireSituation).ToListAsync();
+            if (userDesires.Count == 0)
                 return null;
 
             GetAllDesiresResponse response = new(userDesires);
+            return response;
+        }
+
+        public async Task<GetBorrowedBooksResponse?> GetBorrowedBooks()
+        {
+            ICollection<UserBookBorrow> userBookBorrows = await dataContext.UserBookBorrows.Include(ubb => ubb.User).Include(ubb => ubb.Book)
+                .Include(ubb => ubb.BorrowSituation).Where(ubb => ubb.BorrowSituationId != (int)BorrowSituationEnum.Returned).ToListAsync();
+            if (userBookBorrows.Count == 0)
+                return null;
+
+            GetBorrowedBooksResponse response = new(userBookBorrows);
+            return response;
+        }
+
+        public async Task<GetReservedBooksResponse?> GetReservedBooks()
+        {
+            ICollection<UserBookReserve> userBookReserves = await dataContext.UserBookReserves.Include(ubb => ubb.User).Include(ubb => ubb.Book)
+                .Include(ubb => ubb.ReserveSituation).Where(ubr => ubr.ReserveSituationId != (int)ReserveSituationEnum.Borrowed).ToListAsync();
+            if (userBookReserves.Count == 0)
+                return null;
+
+            GetReservedBooksResponse response = new(userBookReserves);
             return response;
         }
 

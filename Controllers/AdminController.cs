@@ -22,6 +22,24 @@
         }
 
         [HttpPost]
+        public async Task<IActionResult> GetBorrowedBooks()
+        {
+            GetBorrowedBooksResponse? response = await adminService.GetBorrowedBooks();
+            if (response == null)
+                return BadRequest("There is no borrowed book!");
+            return Ok(response);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetReservedBooks()
+        {
+            GetReservedBooksResponse? response = await adminService.GetReservedBooks();
+            if (response == null)
+                return BadRequest("There is no reserved book!");
+            return Ok(response);
+        }
+
+        [HttpPost]
         public async Task<IActionResult> AcceptBorrow(DesireRequest request)
         {
             DesireResponse response = await adminService.AcceptBorrow(request);

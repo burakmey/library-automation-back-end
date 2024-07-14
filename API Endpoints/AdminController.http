@@ -1,0 +1,114 @@
+@library_automation_back_end_HostAddress = https://localhost:3001
+@AccessToken = AccessTokenHere
+
+POST {{library_automation_back_end_HostAddress}}/api/admin/GetAllDesires
+Authorization: Bearer {{AccessToken}}
+
+###
+
+### GetBorrowedBooks
+
+###
+
+### GetReservedBooks
+
+###
+
+POST {{library_automation_back_end_HostAddress}}/api/admin/AcceptBorrow
+Content-Type: application/json
+
+{
+  "desireId" : "1"
+}
+
+###
+
+POST {{library_automation_back_end_HostAddress}}/api/admin/AcceptReserveBorrow
+Content-Type: application/json
+
+{
+  "desireId" : "1"
+}
+
+###
+
+POST {{library_automation_back_end_HostAddress}}/api/admin/AcceptReturn
+Content-Type: application/json
+
+{
+  "desireId" : "1"
+}
+
+###
+
+DELETE {{library_automation_back_end_HostAddress}}/api/admin/RejectDesire
+Content-Type: application/json
+
+{
+  "desireId" : "1"
+}
+
+###
+
+
+POST {{library_automation_back_end_HostAddress}}/api/admin/AddBook
+Content-Type: application/json
+
+{
+  "name" : "Test Book 1",
+  "year" : 2022,
+  "count" : 10,
+  "pageCount" : 555,
+  "languageId" : 8,
+  "publisherId" : 8,
+  "authorIds" : [10, 1],
+  "categoryIds" : [1]
+}
+
+###
+
+POST {{library_automation_back_end_HostAddress}}/api/admin/AddPublisher
+Content-Type: application/json
+
+{
+  "publisher" : {  
+    "name": "Test Publisher 1",
+    "countryId": 1
+  }
+}
+
+###
+
+POST {{library_automation_back_end_HostAddress}}/api/admin/AddAuthor
+Content-Type: application/json
+
+{
+  "authors" : [
+    {  
+      "name": "Test Author 1",
+      "countryId": 1
+    },
+    {  
+      "name": "Test Author 2",
+      "countryId": 1
+    }
+  ]
+}
+
+###
+
+POST {{library_automation_back_end_HostAddress}}/api/admin/AddCategory
+Content-Type: application/json
+
+{
+  "categories" : [
+    {  
+      "name": "Test Category 1"
+    },
+    {  
+      "name": "Test Category 2"
+    }
+  ]
+}
+
+###

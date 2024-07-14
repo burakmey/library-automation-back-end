@@ -1,0 +1,20 @@
+@library_automation_back_end_HostAddress = https://localhost:3001
+
+POST {{library_automation_back_end_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@hotmail.com",
+  "password": "admin"
+}
+
+###
+
+### Register
+
+###
+
+### Refresh
+
+###
+

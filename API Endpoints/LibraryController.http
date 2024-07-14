@@ -1,0 +1,9 @@
+@library_automation_back_end_HostAddress = https://localhost:3001
+
+GET {{library_automation_back_end_HostAddress}}/api/library/getbook?book-id=1
+
+###
+
+GET {{library_automation_back_end_HostAddress}}/api/library/searchbook?search=har&page=0&size=5
+
+###

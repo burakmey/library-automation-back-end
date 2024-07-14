@@ -1,0 +1,46 @@
+@library_automation_back_end_HostAddress = https://localhost:3001
+
+POST {{library_automation_back_end_HostAddress}}/api/user/BorrowBook
+Content-Type: application/json
+
+{
+  "bookId" : "1"
+}
+
+###
+
+POST {{library_automation_back_end_HostAddress}}/api/user/BorrowReservedBook
+Content-Type: application/json
+
+{
+  "bookId" : "1"
+}
+
+###
+
+POST {{library_automation_back_end_HostAddress}}/api/user/ReturnBook
+Content-Type: application/json
+
+{
+  "bookId" : "1"
+}
+
+###
+
+POST {{library_automation_back_end_HostAddress}}/api/user/ReserveBook
+Content-Type: application/json
+
+{
+  "bookId" : "1"
+}
+
+###
+
+DELETE {{library_automation_back_end_HostAddress}}/api/user/CancelDesire
+Content-Type: application/json
+
+{
+  "desireId" : "1"
+}
+
+###

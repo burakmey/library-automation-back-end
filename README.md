@@ -37,3 +37,5 @@ This project is a back-end system used to manage the operations of a library. It
 ## ER Diagram
 ![ER drawio](https://github.com/user-attachments/assets/c517b562-f514-49a2-9abc-c668550927ba)
 
+## Modules
+![Modules drawio](https://github.com/user-attachments/assets/8fe91ce1-7426-483b-9928-72122d243a3a)

@@ -35,6 +35,15 @@ namespace library_automation_back_end.Services
             };
             return token;
         }
+
+        public string? GetUserEmailFromAccessToken(string accessToken)
+        {
+            JwtSecurityTokenHandler tokenHandler = new();
+            JwtSecurityToken token = tokenHandler.ReadJwtToken(accessToken);
+            string? userEmail = token.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            return userEmail;
+        }
+
         public string CreateRefreshToken()
         {
             byte[] numbers = new byte[32];

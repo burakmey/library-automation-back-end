@@ -1,4 +1,4 @@
-﻿namespace library_automation_back_end.Features.LibraryFeatures
+﻿namespace library_automation_back_end.Features.FeaturesLibrary.Responses
 {
     public class GetBookResponse(Book book)
     {

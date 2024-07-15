@@ -5,16 +5,27 @@ Content-Type: application/json
 
 {
   "email": "admin@hotmail.com",
-  "password": "admin"
+  "password": "admin123"
 }
 
 ###
 
-### Register
+POST {{library_automation_back_end_HostAddress}}/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "test@hotmail.com",
+  "name": "TestName",
+  "surname": "TestSurname",
+  "countryId": 1,
+  "password": "test123",
+  "confirmPassword": "test123"
+}
 
 ###
 
-### Refresh
+### POST {{library_automation_back_end_HostAddress}}/api/auth/refresh
 
 ###
+
 

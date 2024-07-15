@@ -1,4 +1,4 @@
-﻿namespace library_automation_back_end.Features.AuthFeatures
+﻿namespace library_automation_back_end.Features.FeaturesAuth.Responses
 {
     public class LoginResponse(User user, ICollection<UserDesire>? userDesires, Token token)
     {
@@ -10,8 +10,8 @@
         public string Nation { get; set; } = user.Country!.Name;
         public string Role { get; set; } = user.Role!.Name;
         public ICollection<Fine>? Fines { get; set; } = user.Fines;
-        public ICollection<UserBookBorrowResponse>? UserBookBorrows { get; set; } = user.UserBookBorrows?.Select(ubb => new UserBookBorrowResponse(ubb)).ToList();
-        public ICollection<UserBookReserveResponse>? UserBookReserves { get; set; } = user.UserBookReserves?.Select(ubr => new UserBookReserveResponse(ubr)).ToList();
-        public ICollection<UserDesireResponse>? Desires { get; set; } = userDesires?.Select(ud => new UserDesireResponse(ud)).ToList();
+        public ICollection<BorrowedResponseModel>? UserBookBorrows { get; set; } = user.UserBookBorrows?.Select(ubb => new BorrowedResponseModel(ubb)).ToList();
+        public ICollection<ReservedResponseModel>? UserBookReserves { get; set; } = user.UserBookReserves?.Select(ubr => new ReservedResponseModel(ubr)).ToList();
+        public ICollection<UserDesireResponseModel>? Desires { get; set; } = userDesires?.Select(ud => new UserDesireResponseModel(ud)).ToList();
     }
 }

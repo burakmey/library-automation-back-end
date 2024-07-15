@@ -1,4 +1,4 @@
-﻿namespace library_automation_back_end.Features.AuthFeatures
+﻿namespace library_automation_back_end.Features.FeaturesAuth.Requests
 {
     public class LoginRequest
     {

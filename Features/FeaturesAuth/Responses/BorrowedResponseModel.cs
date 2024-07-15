@@ -1,6 +1,6 @@
-﻿namespace library_automation_back_end.Features.AuthFeatures
+﻿namespace library_automation_back_end.Features.FeaturesAuth.Responses
 {
-    public class UserBookBorrowResponse(UserBookBorrow userBookBorrow)
+    public class BorrowedResponseModel(UserBookBorrow userBookBorrow)
     {
         public DateTime BorrowDate { get; set; } = userBookBorrow.BorrowDate;
         public DateTime? ReturnDate { get; set; } = userBookBorrow.ReturnDate;

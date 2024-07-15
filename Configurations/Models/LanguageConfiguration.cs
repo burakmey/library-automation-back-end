@@ -6,18 +6,18 @@
         {
             builder.HasData(
                 [
-                    new() { Id = 1, Name = "Türkçe" },
-                    new() { Id = 2, Name = "Rusça" },
-                    new() { Id = 3, Name = "İngilizce" },
-                    new() { Id = 4, Name = "Fransızca" },
-                    new() { Id = 5, Name = "İtalyanca" },
-                    new() { Id = 6, Name = "İspanyolca" },
-                    new() { Id = 7, Name = "Yunanca" },
-                    new() { Id = 8, Name = "Portekizce" },
-                    new() { Id = 9, Name = "Japonca" },
-                    new() { Id = 10, Name = "Almanca" },
-                    new() { Id = 11, Name = "Flemenkçe" },
-                    new() { Id = 12, Name = "Çince" }
+                    new() { Id = 1, Name = "Turkish" },
+                    new() { Id = 2, Name = "Russian" },
+                    new() { Id = 3, Name = "English" },
+                    new() { Id = 4, Name = "French" },
+                    new() { Id = 5, Name = "Italian" },
+                    new() { Id = 6, Name = "Spanish" },
+                    new() { Id = 7, Name = "Greek" },
+                    new() { Id = 8, Name = "Portuguese" },
+                    new() { Id = 9, Name = "Japanese" },
+                    new() { Id = 10, Name = "German" },
+                    new() { Id = 11, Name = "Dutch" },
+                    new() { Id = 12, Name = "Chinese" }
                 ]);
         }
     }

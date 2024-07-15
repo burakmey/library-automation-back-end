@@ -1,21 +1,24 @@
 @library_automation_back_end_HostAddress = https://localhost:3001
-@AccessToken = AccessTokenHere
+@AccessTokenAdmin = AdminAccessTokenHere
 
-POST {{library_automation_back_end_HostAddress}}/api/admin/GetAllDesires
-Authorization: Bearer {{AccessToken}}
-
-###
-
-### GetBorrowedBooks
+GET {{library_automation_back_end_HostAddress}}/api/admin/GetAllDesires
+Authorization: Bearer {{AccessTokenAdmin}}
 
 ###
 
-### GetReservedBooks
+GET {{library_automation_back_end_HostAddress}}/api/admin/GetBorrowedBooks
+Authorization: Bearer {{AccessTokenAdmin}}
+
+###
+
+GET {{library_automation_back_end_HostAddress}}/api/admin/GetReservedBooks
+Authorization: Bearer {{AccessTokenAdmin}}
 
 ###
 
 POST {{library_automation_back_end_HostAddress}}/api/admin/AcceptBorrow
 Content-Type: application/json
+Authorization: Bearer {{AccessTokenAdmin}}
 
 {
   "desireId" : "1"
@@ -25,6 +28,7 @@ Content-Type: application/json
 
 POST {{library_automation_back_end_HostAddress}}/api/admin/AcceptReserveBorrow
 Content-Type: application/json
+Authorization: Bearer {{AccessTokenAdmin}}
 
 {
   "desireId" : "1"
@@ -34,6 +38,7 @@ Content-Type: application/json
 
 POST {{library_automation_back_end_HostAddress}}/api/admin/AcceptReturn
 Content-Type: application/json
+Authorization: Bearer {{AccessTokenAdmin}}
 
 {
   "desireId" : "1"
@@ -43,6 +48,7 @@ Content-Type: application/json
 
 DELETE {{library_automation_back_end_HostAddress}}/api/admin/RejectDesire
 Content-Type: application/json
+Authorization: Bearer {{AccessTokenAdmin}}
 
 {
   "desireId" : "1"
@@ -53,44 +59,45 @@ Content-Type: application/json
 
 POST {{library_automation_back_end_HostAddress}}/api/admin/AddBook
 Content-Type: application/json
+Authorization: Bearer {{AccessTokenAdmin}}
 
 {
   "name" : "Test Book 1",
   "year" : 2022,
   "count" : 10,
   "pageCount" : 555,
-  "languageId" : 8,
-  "publisherId" : 8,
-  "authorIds" : [10, 1],
-  "categoryIds" : [1]
+  "language" : "English",
+  "publisher" : "Panama",
+  "authors" : ["Test Author 1", "Test Author 2"],
+  "categories" : ["Test Category 1", "Test Category 2"]
 }
 
 ###
 
 POST {{library_automation_back_end_HostAddress}}/api/admin/AddPublisher
 Content-Type: application/json
+Authorization: Bearer {{AccessTokenAdmin}}
 
 {
-  "publisher" : {  
     "name": "Test Publisher 1",
-    "countryId": 1
-  }
+    "country": "spain"
 }
 
 ###
 
 POST {{library_automation_back_end_HostAddress}}/api/admin/AddAuthor
 Content-Type: application/json
+Authorization: Bearer {{AccessTokenAdmin}}
 
 {
   "authors" : [
     {  
       "name": "Test Author 1",
-      "countryId": 1
+      "country": "Turkiye"
     },
     {  
       "name": "Test Author 2",
-      "countryId": 1
+      "country": "Azerbaijan"
     }
   ]
 }
@@ -99,6 +106,7 @@ Content-Type: application/json
 
 POST {{library_automation_back_end_HostAddress}}/api/admin/AddCategory
 Content-Type: application/json
+Authorization: Bearer {{AccessTokenAdmin}}
 
 {
   "categories" : [

@@ -1,4 +1,7 @@
-﻿namespace library_automation_back_end.Controllers
+﻿using library_automation_back_end.Features.FeaturesAuth.Requests;
+using library_automation_back_end.Features.FeaturesAuth.Responses;
+
+namespace library_automation_back_end.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
@@ -22,7 +25,7 @@
 
             Token token = tokenService.CreateAccessToken(user);
             await authService.UpdateRefreshToken(user, token);
-            ICollection<UserDesire>? userDesires = await authService.GetUserDesires(user.Id);
+            ICollection<UserDesire> userDesires = await authService.GetUserDesires(user.Id);
             LoginResponse response = new(user, userDesires, token);
             HttpContext.Response.Cookies.Append("token", token.RefreshToken, new CookieOptions { HttpOnly = true, Secure = true, IsEssential = true, SameSite = SameSiteMode.None });
             return Ok(response);
@@ -31,7 +34,7 @@
         [HttpPost]
         public async Task<IActionResult> Register(RegisterRequest request)
         {
-            RegisterResponse response = await authService.CreateUser(request);
+            MessageResponse response = await authService.CreateUser(request);
             if (!response.Succeeded)
                 return BadRequest(response.Message);
 

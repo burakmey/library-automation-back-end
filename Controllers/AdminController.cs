@@ -1,4 +1,7 @@
-﻿namespace library_automation_back_end.Controllers
+﻿using library_automation_back_end.Features.FeaturesAdmin.Requests;
+using library_automation_back_end.Features.FeaturesAdmin.Responses;
+
+namespace library_automation_back_end.Controllers
 {
     [Authorize(Policy = "Admin")]
     [ApiController]
@@ -12,37 +15,31 @@
             this.adminService = adminService;
         }
 
-        [HttpPost]
+        [HttpGet]
         public async Task<IActionResult> GetAllDesires()
         {
             GetAllDesiresResponse? response = await adminService.GetAllDesires();
-            if (response == null)
-                return BadRequest("There is no approvel!");
             return Ok(response);
         }
 
-        [HttpPost]
+        [HttpGet]
         public async Task<IActionResult> GetBorrowedBooks()
         {
             GetBorrowedBooksResponse? response = await adminService.GetBorrowedBooks();
-            if (response == null)
-                return BadRequest("There is no borrowed book!");
             return Ok(response);
         }
 
-        [HttpPost]
+        [HttpGet]
         public async Task<IActionResult> GetReservedBooks()
         {
             GetReservedBooksResponse? response = await adminService.GetReservedBooks();
-            if (response == null)
-                return BadRequest("There is no reserved book!");
             return Ok(response);
         }
 
         [HttpPost]
         public async Task<IActionResult> AcceptBorrow(DesireRequest request)
         {
-            DesireResponse response = await adminService.AcceptBorrow(request);
+            MessageResponse response = await adminService.AcceptBorrow(request);
             if (!response.Succeeded)
                 return BadRequest(response.Message);
             return Ok(response.Message);
@@ -51,7 +48,7 @@
         [HttpPost]
         public async Task<IActionResult> AcceptReserveBorrow(DesireRequest request)
         {
-            DesireResponse response = await adminService.AcceptReserveBorrow(request);
+            MessageResponse response = await adminService.AcceptReserveBorrow(request);
             if (!response.Succeeded)
                 return BadRequest(response.Message);
             return Ok(response.Message);
@@ -60,7 +57,7 @@
         [HttpPost]
         public async Task<IActionResult> AcceptReturn(DesireRequest request)
         {
-            DesireResponse response = await adminService.AcceptReturn(request);
+            MessageResponse response = await adminService.AcceptReturn(request);
             if (!response.Succeeded)
                 return BadRequest(response.Message);
             return Ok(response.Message);
@@ -69,7 +66,7 @@
         [HttpDelete]
         public async Task<IActionResult> RejectDesire(DesireRequest request)
         {
-            DesireResponse response = await adminService.RejectDesire(request);
+            MessageResponse response = await adminService.RejectDesire(request);
             if (!response.Succeeded)
                 return BadRequest(response.Message);
             return Ok(response.Message);
@@ -78,7 +75,7 @@
         [HttpPost]
         public async Task<IActionResult> AddBook(AddBookRequest request)
         {
-            AddResponse response = await adminService.AddBook(request);
+            MessageResponse response = await adminService.AddBook(request);
             if (!response.Succeeded)
                 return BadRequest(response.Message);
             return Ok(response.Message);
@@ -87,7 +84,7 @@
         [HttpPost]
         public async Task<IActionResult> AddPublisher(AddPublisherRequest request)
         {
-            AddResponse response = await adminService.AddPublisher(request);
+            MessageResponse response = await adminService.AddPublisher(request);
             if (!response.Succeeded)
                 return BadRequest(response.Message);
             return Ok(response.Message);
@@ -97,7 +94,7 @@
         [HttpPost]
         public async Task<IActionResult> AddAuthor(AddAuthorRequest request)
         {
-            AddResponse response = await adminService.AddAuthor(request);
+            MessageResponse response = await adminService.AddAuthor(request);
             if (!response.Succeeded)
                 return BadRequest(response.Message);
             return Ok(response.Message);
@@ -106,7 +103,7 @@
         [HttpPost]
         public async Task<IActionResult> AddCategory(AddCategoryRequest request)
         {
-            AddResponse response = await adminService.AddCategory(request);
+            MessageResponse response = await adminService.AddCategory(request);
             if (!response.Succeeded)
                 return BadRequest(response.Message);
             return Ok(response.Message);

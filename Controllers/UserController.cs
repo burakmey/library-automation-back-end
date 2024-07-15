@@ -1,4 +1,7 @@
-﻿namespace library_automation_back_end.Controllers
+﻿using library_automation_back_end.Features.FeaturesUser.Requests;
+using library_automation_back_end.Features.FeaturesUser.Responses;
+
+namespace library_automation_back_end.Controllers
 {
     [Authorize]
     [Route("api/[controller]/[action]")]
@@ -7,23 +10,25 @@
     {
         readonly AuthService authService;
         readonly UserService userService;
+        readonly TokenService tokenService;
 
-        public UserController(AuthService authService, UserService userService)
+        public UserController(AuthService authService, UserService userService, TokenService tokenService)
         {
             this.authService = authService;
             this.userService = userService;
+            this.tokenService = tokenService;
         }
 
         [HttpPost]
         public async Task<IActionResult> BorrowBook(BookRequest request)
         {
-            User? user = await GetUserFromToken();
-            if (user == null)
-                return BadRequest("Invalid refresh token!");
-            BookResponse bookResponse = await userService.SendBorrowRequest(request, user.Id);
+            int userId = await GetUserIdFromAccessToken();
+            if (userId == 0)
+                return BadRequest("Invalid access token!");
+            MessageResponse bookResponse = await userService.SendBorrowRequest(request, userId);
             if (!bookResponse.Succeeded)
                 return BadRequest(bookResponse.Message);
-            ICollection<UserDesire>? userDesires = await authService.GetUserDesires(user.Id);
+            ICollection<UserDesire>? userDesires = await authService.GetUserDesires(userId);
             SendDesireResponse response = new(bookResponse, userDesires);
             return Ok(response);
         }
@@ -31,13 +36,13 @@
         [HttpPost]
         public async Task<IActionResult> BorrowReservedBook(BookRequest request)
         {
-            User? user = await GetUserFromToken();
-            if (user == null)
-                return BadRequest("Invalid refresh token!");
-            BookResponse bookResponse = await userService.SendReservedBorrowRequest(request, user.Id);
+            int userId = await GetUserIdFromAccessToken();
+            if (userId == 0)
+                return BadRequest("Invalid access token!");
+            MessageResponse bookResponse = await userService.SendReservedBorrowRequest(request, userId);
             if (!bookResponse.Succeeded)
                 return BadRequest(bookResponse.Message);
-            ICollection<UserDesire>? userDesires = await authService.GetUserDesires(user.Id);
+            ICollection<UserDesire>? userDesires = await authService.GetUserDesires(userId);
             SendDesireResponse response = new(bookResponse, userDesires);
             return Ok(response);
         }
@@ -45,13 +50,13 @@
         [HttpPost]
         public async Task<IActionResult> ReturnBook(BookRequest request)
         {
-            User? user = await GetUserFromToken();
-            if (user == null)
-                return BadRequest("Invalid refresh token!");
-            BookResponse? bookResponse = await userService.SendReturnRequest(request, user.Id);
+            int userId = await GetUserIdFromAccessToken();
+            if (userId == 0)
+                return BadRequest("Invalid access token!");
+            MessageResponse? bookResponse = await userService.SendReturnRequest(request, userId);
             if (!bookResponse.Succeeded)
                 return BadRequest(bookResponse.Message);
-            ICollection<UserDesire>? userDesires = await authService.GetUserDesires(user.Id);
+            ICollection<UserDesire>? userDesires = await authService.GetUserDesires(userId);
             SendDesireResponse response = new(bookResponse, userDesires);
             return Ok(response);
         }
@@ -59,13 +64,13 @@
         [HttpPost]
         public async Task<IActionResult> ReserveBook(BookRequest request)
         {
-            User? user = await GetUserFromToken();
-            if (user == null)
-                return BadRequest("Invalid refresh token!");
-            BookResponse? bookResponse = await userService.ReserveBook(request, user.Id);
+            int userId = await GetUserIdFromAccessToken();
+            if (userId == 0)
+                return BadRequest("Invalid access token!");
+            MessageResponse? bookResponse = await userService.ReserveBook(request, userId);
             if (!bookResponse.Succeeded)
                 return BadRequest(bookResponse.Message);
-            ICollection<UserBookReserve>? userReservations = await authService.GetUserReservations(user.Id);
+            ICollection<UserBookReserve>? userReservations = await authService.GetUserReservations(userId);
             ReserveResponse response = new(bookResponse, userReservations);
             return Ok(response);
         }
@@ -73,24 +78,25 @@
         [HttpDelete]
         public async Task<IActionResult> CancelDesire(DesireRequest request)
         {
-            User? user = await GetUserFromToken();
-            if (user == null)
-                return BadRequest("Invalid refresh token!");
-            BookResponse? bookResponse = await userService.DeleteRequest(request, user.Id);
+            int userId = await GetUserIdFromAccessToken();
+            if (userId == 0)
+                return BadRequest("Invalid access token!");
+            MessageResponse? bookResponse = await userService.DeleteRequest(request, userId);
             if (!bookResponse.Succeeded)
                 return BadRequest(bookResponse.Message);
-            ICollection<UserDesire>? userDesires = await authService.GetUserDesires(user.Id);
+            ICollection<UserDesire>? userDesires = await authService.GetUserDesires(userId);
             SendDesireResponse response = new(bookResponse, userDesires);
             return Ok(response);
         }
 
-        async Task<User?> GetUserFromToken()
+        async Task<int> GetUserIdFromAccessToken()
         {
-            string? refreshToken = Request.Cookies["token"];
-            if (refreshToken == null)
-                return null;
-            User? user = await authService.GetUserWithRefreshToken(refreshToken);
-            return user;
+            string accessToken = Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+            string? userEmail = tokenService.GetUserEmailFromAccessToken(accessToken);
+            if (userEmail == null)
+                return 0;
+            int userId = await authService.GetUserIdFromEmail(userEmail);
+            return userId;
         }
     }
 }

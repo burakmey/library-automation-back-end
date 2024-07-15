@@ -10,6 +10,9 @@
 *.userosscache
 *.sln.docstates
 
+# Ignore migrations folders
+**/Migrations/
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 

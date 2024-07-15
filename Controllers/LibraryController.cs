@@ -1,4 +1,7 @@
-﻿namespace library_automation_back_end.Controllers
+﻿using library_automation_back_end.Features.FeaturesLibrary.Requests;
+using library_automation_back_end.Features.FeaturesLibrary.Responses;
+
+namespace library_automation_back_end.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
@@ -25,7 +28,7 @@
         {
             SearchResultResponse? response = await libraryService.GetSearchedBooks(request);
             if (response == null)
-                return BadRequest("There is no book!");
+                return Ok("No book found matching the search value by author, publisher or book names!");
             return Ok(response);
         }
     }

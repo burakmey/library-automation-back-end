@@ -1,9 +1,7 @@
 global using library_automation_back_end.Configurations;
 global using library_automation_back_end.Data;
-global using library_automation_back_end.Features.AdminFeatures;
-global using library_automation_back_end.Features.AuthFeatures;
-global using library_automation_back_end.Features.LibraryFeatures;
-global using library_automation_back_end.Features.UserFeatures;
+global using library_automation_back_end.Features.CommonRequests;
+global using library_automation_back_end.Features.CommonResponses;
 global using library_automation_back_end.Models;
 global using library_automation_back_end.Models.AbstractModels;
 global using library_automation_back_end.Services;

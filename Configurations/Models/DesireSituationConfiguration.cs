@@ -6,9 +6,9 @@
         {
             builder.HasData(
             [
-                new() { Id = 1, Situation = "Ödünç" },
-                new() { Id = 2, Situation = "Rezerve-Ödünç" },
-                new() { Id = 3, Situation = "İade" }
+                new() { Id = 1, Situation = DesireSituationEnum.Borrow.ToString() },
+                new() { Id = 2, Situation = DesireSituationEnum.ReserveBorrow.ToString() },
+                new() { Id = 3, Situation = DesireSituationEnum.Return.ToString() }
             ]);
         }
     }

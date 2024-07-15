@@ -6,22 +6,22 @@
         {
             builder.HasData(
                 [
-                    new() { Id = 1, Name = "Bilim Kurgu" },
-                    new() { Id = 2, Name = "Tarihsel Kurgu" },
-                    new() { Id = 3, Name = "Edebi Kurgu" },
-                    new() { Id = 4, Name = "Fantastik" },
+                    new() { Id = 1, Name = "Science Fiction" },
+                    new() { Id = 2, Name = "Historical Fiction" },
+                    new() { Id = 3, Name = "Literary Fiction" },
+                    new() { Id = 4, Name = "Fantasy" },
                     new() { Id = 5, Name = "Thriller" },
-                    new() { Id = 6, Name = "Gerilim" },
-                    new() { Id = 7, Name = "Romantik" },
-                    new() { Id = 8, Name = "Macera" },
-                    new() { Id = 9, Name = "Çizgi Roman" },
-                    new() { Id = 10, Name = "Gizem" },
-                    new() { Id = 11, Name = "Biyografi" },
-                    new() { Id = 12, Name = "Klasikler" },
-                    new() { Id = 13, Name = "Tarih" },
-                    new() { Id = 14, Name = "Polisiye Kurgu" },
-                    new() { Id = 15, Name = "Anı" },
-                    new() { Id = 16, Name = "Ansiklopedi" }
+                    new() { Id = 6, Name = "Suspense" },
+                    new() { Id = 7, Name = "Romantic" },
+                    new() { Id = 8, Name = "Adventure" },
+                    new() { Id = 9, Name = "Comic Book" },
+                    new() { Id = 10, Name = "Mystery" },
+                    new() { Id = 11, Name = "Biography" },
+                    new() { Id = 12, Name = "Classics" },
+                    new() { Id = 13, Name = "History" },
+                    new() { Id = 14, Name = "Detective Fiction" },
+                    new() { Id = 15, Name = "Memoir" },
+                    new() { Id = 16, Name = "Encyclopedia" }
                 ]);
         }
     }

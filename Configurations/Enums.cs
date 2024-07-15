@@ -6,18 +6,16 @@
         Returned,
         TimeOut
     }
-    public enum ReserveSituationEnum
-    {
-        Waiting = 1,
-        Borrowed,
-        TimeOut
-    }
-
     public enum DesireSituationEnum
     {
         Borrow = 1,
         ReserveBorrow,
         Return
     }
-
+    public enum ReserveSituationEnum
+    {
+        Waiting = 1,
+        Borrowed,
+        TimeOut
+    }
 }

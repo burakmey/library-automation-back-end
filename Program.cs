@@ -56,7 +56,7 @@ namespace library_automation_back_end
             {
                 options.AddDefaultPolicy(policy =>
                 {
-                    policy.WithOrigins(builder.Configuration["ORIGIN"] ?? throw new Exception("ORIGIN not found!"))
+                    policy.WithOrigins(builder.Configuration["FrontendSettings:Origin"] ?? throw new Exception("Origin not found!"))
                           .AllowAnyMethod()
                           .AllowAnyHeader()
                           .AllowCredentials();
